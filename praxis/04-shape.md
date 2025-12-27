@@ -8,10 +8,11 @@
 ## Target Experience
 
 1. Create project prepares a `prompts.txt` (ideas per line).
-2. Run `render-run prepare --in prompts.txt --out ./runs/<timestamp>`.
-3. The command writes `manifest.json` + `expanded_prompts.txt`, recording providers + prompts.
-4. Subsequent commands (`render-run generate --provider dalle`, `--provider gemini`, etc.) will read the manifest and populate provider-specific folders.
-5. Reviewers open the run folder, inspect artifacts, and feed winners back into Create workflows.
+2. Optionally attach reference bundles (subjects, style swatches, object close-ups) that live in the Create project.
+3. Run `render-run prepare --in prompts.txt --out ./runs/<timestamp>` and pass metadata (prompt slots, reference file paths/URLs, desired specificity level).
+4. The command writes `manifest.json` + `expanded_prompts.txt`, recording providers + prompts + reference metadata.
+5. Subsequent commands (`render-run generate --provider dalle`, `--provider gemini`, etc.) read the manifest, apply the appropriate prompt tier (loose vs strict), and populate provider-specific folders, noting which reference bundle was used.
+6. Reviewers open the run folder, inspect artifacts, and feed winners + learnings back into Create workflows.
 
 ## Architecture Overview
 
@@ -23,9 +24,15 @@
 ## Interfaces / Contracts
 
 - `prompts.txt`: UTF-8, `#` ignored, blank lines skipped.
-- `manifest.json`: contains schema version, metadata, `items[]` with `id`, `idea`, `prompt`, `providers`.
+- `manifest.json`: contains schema version, metadata, `items[]` with:
+  - `id`, `idea`, `prompt`
+  - `prompt_slots` (subject, action, mood, tone, camera, palette, etc.)
+  - `reference_assets` (people likenesses, style samples, object shots)
+  - `specificity_level` (e.g., `loose`, `balanced`, `strict`) to signal how constrained the prompt is
+  - `providers`
 - `expanded_prompts.txt`: human-readable list used for manual review or copy-paste into UI.
 - Future `results/<provider>/<id>_<slug>.png`: canonical naming for generated images.
+- Variation strategy: manifest tracks variation indices so Create can compare e.g. `subject=A + style=B + mood=loose` vs `subject=A + style=C + mood=strict`.
 
 ## Data & Config
 

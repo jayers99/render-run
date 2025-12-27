@@ -21,6 +21,17 @@ Creative projects need a dependable way to turn curated prompts into multi-provi
 - **Code domain maintainers:** own the Render Run utility, ensure CLI/API stays stable.
 - **Agent operators:** run Render Run via Copilot/MCP tasks, want clear commands + artifacts.
 
+## Ownership Boundaries (Create vs Render Run)
+
+- **Lives in Create:**
+  - Curating reference bundles (likeness photos, style palettes, object details).
+  - Designing prompt building blocks (subject, action, mood, tone, camera, palette) and mixing/matching them per recipient.
+  - Exploring prompt spectra (loose/serendipitous vs. tightly specified) and deciding which variations to pursue.
+- **Lives in Render Run (Code):**
+  - Accepting structured prompt payloads from Create projects (including reference asset paths/URLs).
+  - Fan-out execution (CLI/API calls) and tracking which variation came from which template/slot.
+  - Capturing outputs/metadata so Create can judge which combos worked.
+
 ## Emerging Principles
 
 1. **Manifest-first:** every run should leave behind machine-readable context (prompts, providers, timestamps).

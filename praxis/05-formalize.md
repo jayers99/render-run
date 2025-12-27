@@ -22,6 +22,7 @@ Render Run is a Typer-based CLI + lightweight library that prepares and (eventua
   - Provider abstraction layer + first-party adapters (OpenAI Images, Google Gemini/Imagen).
   - `generate` command that consumes manifests, calls providers, writes artifacts.
   - `review`/`status` helpers for summarizing output folders.
+  - Prompt schema definition (required slots vs optional slots, reference asset linkage, specificity tiers) in collaboration with Create domain owners.
 - **Out of scope (v0):**
   - UI front-ends
   - Long-running job orchestration
@@ -45,6 +46,7 @@ Render Run is a Typer-based CLI + lightweight library that prepares and (eventua
 - All commands must run offline up through `prepare` (no provider calls required).
 - Provider commands must support dry-run mode and structured logging.
 - Default run directories live under `.tmp/runs/<timestamp>` when not specified.
+- Prompt schema must be extensible: Create projects can add new slots (e.g., `lighting_reference`, `object_reference_urls`) without breaking existing runs; manifest must preserve unused fields for audit.
 
 ## Testing Strategy
 
