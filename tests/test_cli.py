@@ -13,6 +13,8 @@ def test_help_shows_commands(cli_runner: CliRunner) -> None:
     assert result.exit_code == 0
     assert "hello" in result.output
     assert "expand" in result.output
+    assert "prepare" in result.output
+    assert "generate" in result.output
 
 
 def test_hello_default(cli_runner: CliRunner) -> None:
@@ -41,8 +43,12 @@ def test_prepare_writes_manifest_and_expanded_prompts(cli_runner: CliRunner) -> 
                 str(prompts_path),
                 "--out",
                 str(out_dir),
-                "--providers",
-                "dalle,gemini",
+                "--domain",
+                "create",
+                "--project",
+                "xmas-cards-2025",
+                "--run-id",
+                "test-run",
             ],
         )
         assert result.exit_code == 0
@@ -56,5 +62,27 @@ def test_prepare_writes_manifest_and_expanded_prompts(cli_runner: CliRunner) -> 
         assert manifest["schema_version"] == "0.1"
         assert manifest["expand_prompts"] is True
         assert len(manifest["items"]) == 2
-        assert manifest["items"][0]["idea"] == "first idea"
-        assert manifest["items"][0]["providers"] == ["dalle", "gemini"]
+        assert manifest["domain"] == "create"
+        assert manifest["project"] == "xmas-cards-2025"
+        assert manifest["run_id"] == "test-run"
+
+
+def test_generate_requires_provider_env_template(cli_runner: CliRunner) -> None:
+    with cli_runner.isolated_filesystem():
+        out_dir = Path("run")
+        out_dir.mkdir(parents=True)
+        manifest = {
+            "schema_version": "0.1",
+            "created_at": "2025-01-01T00:00:00Z",
+            "input_file": "prompts.txt",
+            "out_dir": str(out_dir),
+            "expand_prompts": True,
+            "items": [{"id": 1, "idea": "a cat", "prompt": "a cat"}],
+        }
+        manifest_path = out_dir / "manifest.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        result = cli_runner.invoke(app, ["generate", "--manifest", str(manifest_path)])
+        assert result.exit_code != 0
+        assert result.exception is not None
+        assert "RENDER_RUN_GCLOUD_IMAGE_COMMAND_TEMPLATE" in str(result.exception)

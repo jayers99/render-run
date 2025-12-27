@@ -30,6 +30,9 @@ class Manifest:
     out_dir: str
     expand_prompts: bool
     items: list[ManifestItem]
+    domain: str | None = None
+    project: str | None = None
+    run_id: str | None = None
 
 
 def prepare_run(
@@ -38,6 +41,9 @@ def prepare_run(
     out_dir: Path,
     expand_prompts: bool,
     providers: list[str],
+    domain: str | None,
+    project: str | None,
+    run_id: str | None,
 ) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -59,6 +65,9 @@ def prepare_run(
         out_dir=str(out_dir),
         expand_prompts=expand_prompts,
         items=items,
+        domain=domain,
+        project=project,
+        run_id=run_id,
     )
 
     manifest_path = out_dir / "manifest.json"

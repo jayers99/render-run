@@ -40,13 +40,41 @@ Pick one:
 
 Render Run establishes a minimal, stable interface for Create projects:
 
-- **Input:** a text file of ideas/prompts, one per line (blank lines and `#` comments ignored)
+- **Input (current):** a text file of ideas/prompts, one per line (blank lines and `#` comments ignored)
 - **Command:** `render-run prepare --in <prompts.txt> --out <run_dir> [--expand/--no-expand] [--providers ...]`
 - **Outputs (in `<run_dir>`):**
   - `manifest.json` (run metadata + list of items)
   - `expanded_prompts.txt` (one expanded prompt per line)
 
-Provider calls and image downloads are intentionally not implemented yet.
+Create-domain direction (planned): use a **Markdown idea doc** owned/validated by Create, with a minimal per-idea contract (`idea_id` + `prompt`). See the Create opinion doc: `docs/opinions/create/render-run.md`.
+
+### Default Output Location (Recommended)
+
+If you omit `--out`, Render Run derives an output directory using your user-level generated content root:
+
+`<generated_root>/<domain>/<project>/runs/<run_id>`
+
+Example:
+
+`~/icloud/praxis-generated-content/create/xmas-cards-2025/runs/20251226-235959`
+
+Config precedence:
+
+1. `PRAXIS_GENERATED_CONTENT_ROOT`
+2. `~/.config/praxis/config.json` with `{ "generated_content_root": "..." }`
+3. Default: `~/icloud/praxis-generated-content`
+
+### Image Generation (MVP)
+
+MVP supports a single provider implementation: a **gcloud-driven CLI wrapper**.
+
+- Generate images: `render-run generate --manifest <run_dir>/manifest.json --provider gcloud`
+- Configure the provider command via `RENDER_RUN_GCLOUD_IMAGE_COMMAND_TEMPLATE`.
+
+This is intentionally abstract so we can add:
+
+- OpenAI CLI (later)
+- OpenAI API (later)
 
 ## License
 
