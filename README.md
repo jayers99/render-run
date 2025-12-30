@@ -21,7 +21,7 @@ Pick one:
 
 - **As a standalone CLI (local checkout / submodule)**
 
-  - Run: `poetry -C examples/code/render-run run render-run --help`
+  - Run: `poetry -C extensions/render-run run render-run --help`
 
 - **As a dependency (recommended once published as its own repo)**
   - Add via Poetry (example): `poetry add git+https://github.com/jayers99/render-run.git`
